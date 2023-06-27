@@ -2,18 +2,9 @@ const QUOTE = process.env.QUOTE;
 const AMOUNT = parseInt(process.env.AMOUNT);
 const INTERVAL = parseInt(process.env.CRAWLER_INTERVAL);
 const PROFITABILITY = parseFloat(process.env.PROFITABILITY);
-
-
  	
 const { exchangeInfo } = require("./api");
 const stream = require("./stream");
-async function start() {
-    //pega todas moedas que estão sendo negociadas
-    console.log('Loading Exchange Info...');
-    const allSymbols = await exchangeInfo();
-    console.log(allSymbols);
-}
-
 
 function getBuyBuySell(buySymbols, allSymbols, symbolsMap) {
     const buyBuySell = [];

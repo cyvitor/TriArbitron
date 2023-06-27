@@ -1,4 +1,5 @@
 const Binance = require('node-binance-api');
+const fx = require('./fx');
 
 let binanceConfigSpot
 
@@ -83,11 +84,16 @@ async function exchangeInfo(apiKey, apiSecret) {
     return binance.exchangeInfo();
 }
 
+async function BBS(apiKey, apiSecret, symbolB1, symbolB2, symbolS1, symbolsInfo){
+    console.log(symbolB1);
+    return true;
+}
 
 module.exports = {
     getSpotTrades,
     sendSpotBuyMarket,
     sendSpotSellMarket,
     getSpotBalances,
-    exchangeInfo
+    exchangeInfo,
+    BBS
 };
