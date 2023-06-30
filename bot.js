@@ -2,8 +2,11 @@ const QUOTE = process.env.QUOTE;
 const AMOUNT = parseInt(process.env.AMOUNT);
 const INTERVAL = parseInt(process.env.CRAWLER_INTERVAL);
 const PROFITABILITY = parseFloat(process.env.PROFITABILITY);
- 	
+const apiKey = process.env.APIKEY;
+const apiSecret = process.env.SECRET;
+
 const { exchangeInfo } = require("./api");
+const { BBS, BSS } = require("./binance");
 const stream = require("./stream");
 
 function getBuyBuySell(buySymbols, allSymbols, symbolsMap) {
@@ -49,7 +52,7 @@ function getBuySellSell(buySymbols, allSymbols, symbolsMap) {
     return buySellSell;
 }
 
-function processBuyBuySell(buyBuySell) {
+function processBuyBuySell(buyBuySell, allSymbols) {
     for (let i = 0; i < buyBuySell.length; i++) {
         const candidate = buyBuySell[i];
 
@@ -73,10 +76,11 @@ function processBuyBuySell(buyBuySell) {
             console.log(new Date());
             console.log(`OP BBS EM ${candidate.buy1.symbol} > ${candidate.buy2.symbol} > ${candidate.sell1.symbol} = ${crossRate}`);
             console.log(`Investindo ${QUOTE}${AMOUNT}, retorna ${QUOTE}${((AMOUNT / priceBuy1) / priceBuy2) * priceSell1}`);
+            BBS(apiKey, apiSecret, candidate.buy1.symbol, priceBuy1, candidate.buy2.symbol, priceBuy2, candidate.sell1.symbol, AMOUNT, allSymbols);
         }
     }
 }
-function processBuySellSell(buySellSell) {
+function processBuySellSell(buySellSell, allSymbols) {
     for (let i = 0; i < buySellSell.length; i++) {
         const candidate = buySellSell[i];
 
@@ -99,6 +103,7 @@ function processBuySellSell(buySellSell) {
             console.log(new Date());
             console.log(`OP BSS EM ${candidate.buy1.symbol} > ${candidate.sell1.symbol} > ${candidate.sell2.symbol} = ${crossRate}`);
             console.log(`Investindo ${QUOTE}${AMOUNT}, retorna ${QUOTE}${((AMOUNT / priceBuy1) * priceSell1) * priceSell2}`);
+            BSS (apiKey, apiSecret, candidate.buy1.symbol, priceBuy1, candidate.sell1.symbol, candidate.sell2.symbol, AMOUNT, allSymbols);
         }
     }
 }
@@ -124,8 +129,8 @@ async function start() {
 
     setInterval(async () => {
         //console.log(new Date());
-        processBuyBuySell(buyBuySell);
-        processBuySellSell(buySellSell);
+        processBuyBuySell(buyBuySell, allSymbols);
+        processBuySellSell(buySellSell, allSymbols);
     }, INTERVAL)
 }
 
