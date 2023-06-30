@@ -14,9 +14,14 @@ function countDecimals(value) {
     }
     return value.toString().split(".")[1].length || 0;
 }
-
+function removeExcessDecimals(number, decimalPlaces) {
+    const factor = 10 ** decimalPlaces;
+    const truncatedNumber = Math.floor(number * factor) / factor;
+    return truncatedNumber;
+}
 module.exports = {
     calc,
     calc2,
-    countDecimals
+    countDecimals,
+    removeExcessDecimals
 };
