@@ -1,6 +1,5 @@
 const Binance = require('node-binance-api');
 const fx = require('./fx');
-const api = require("./api");
 const logFile = process.env.LOG;
 
 let binanceConfigSpot
@@ -45,9 +44,14 @@ async function sendSpotBuyMarket(apiKey, apiSecret, symbol, quantity) {
         APISECRET: apiSecret,
         ...binanceConfigSpot,
     });
-    const r = await binance.marketBuy(symbol, quantity);
-
-    return r;
+    try {
+        const r = await binance.marketBuy(symbol, quantity);
+        return r;
+    } catch (error) {
+        console.error('ERROR: ', error);
+        fx.escreveLogJson2("ERROR", error, logFile);
+        return null;
+    }
 }
 
 async function sendSpotSellMarket(apiKey, apiSecret, symbol, quantity) {
@@ -60,10 +64,10 @@ async function sendSpotSellMarket(apiKey, apiSecret, symbol, quantity) {
     });
     try {
         const r = await binance.marketSell(symbol, quantity);
-
         return r;
     } catch (error) {
         console.error('ERROR: ', error);
+        fx.escreveLogJson2("ERROR", error, logFile);
         return null;
     }
 }
