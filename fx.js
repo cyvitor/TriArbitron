@@ -9,6 +9,23 @@ function calc2(montanteInvestido, precoMoeda, casasDecimais) {
     const quantidadeTruncada = Math.floor(quantidadeMoedas * fator) / fator;
     return quantidadeTruncada;
 }
+function calc3(valorInvestido, precoMoeda, casasDecimais) {
+    // Calcula a quantidade bruta de moedas
+    let quantidadeMoedas = valorInvestido / precoMoeda;
+
+    // Ajusta a quantidade de moedas de acordo com as casas decimais
+    let fator = 10 ** casasDecimais;
+    quantidadeMoedas = Math.floor(quantidadeMoedas * fator) / fator;
+
+    // Calcula o valor final investido com base na quantidade ajustada de moedas
+    let valorFinalInvestido = quantidadeMoedas * precoMoeda;
+
+    // Retorna a quantidade de moedas e o valor final investido
+    return {
+        quantidadeMoedas: quantidadeMoedas,
+        valorFinalInvestido: valorFinalInvestido
+    };
+}
 function countDecimals(value) {
     if (Math.floor(value) === value) {
         return 0;
@@ -50,9 +67,10 @@ function escreveLogJson2(txt, msg, file) {
 module.exports = {
     calc,
     calc2,
+    calc3,
     countDecimals,
     removeExcessDecimals,
     escreveLog,
     escreveLogJson,
-    escreveLogJson2
+    escreveLogJson2,
 };
