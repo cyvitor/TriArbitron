@@ -141,23 +141,22 @@ async function getOrder(apiKey, apiSecret, symbol, orderId) {
 }
 
 async function BBS(apiKey, apiSecret, symbolB1, symbolPriceB1, symbolB2, symbolPriceB2, symbolS1, invest, symbolsInfo) {
-    //console.log(symbolsInfo);
     const symbolPropsB1 = symbolsInfo.find(s => s.symbol === symbolB1);
-    const decimals = symbolPropsB1.decimals;
+    const symbolPropsB2 = symbolsInfo.find(s => s.symbol === symbolB2);
+    const symbolPropsS1 = symbolsInfo.find(s => s.symbol === symbolS1);
+
     const calc = fx.calc3(invest, symbolPriceB1, symbolPropsB2.decimals);
     const quantityB1 = calc.quantidadeMoedas
     const B1 = await sendSpotBuyMarket(apiKey, apiSecret, symbolB1, quantityB1);
     fx.escreveLog(`${symbolB1} invest ${calc.valorFinalInvestido} preco ${symbolPriceB1} quanti ${quantityB1}`, logFile);
     fx.escreveLog(`order: executedQty: ${B1.executedQty}`, logFile);
-
-    const symbolPropsB2 = symbolsInfo.find(s => s.symbol === symbolB2);
+    
     const decimals2 = symbolPropsB2.decimals;
     const quantityB2 = fx.calc2(B1.executedQty, symbolPriceB2, decimals2);
     const B2 = await sendSpotBuyMarket(apiKey, apiSecret, symbolB2, quantityB2);
     fx.escreveLog(`${symbolB2} invest ${B1.executedQty} preco ${symbolPriceB2} quanti ${quantityB2}`, logFile);
     fx.escreveLog(`order: executedQty: ${B2.executedQty}`, logFile);
-
-    const symbolPropsS1 = symbolsInfo.find(s => s.symbol === symbolS1);
+    
     const quantityS1 = fx.removeExcessDecimals(B2.executedQty, symbolPropsS1.decimals);
     const S1 = await sendSpotSellMarket(apiKey, apiSecret, symbolS1, quantityS1);
     fx.escreveLog(`${symbolS1} vende ${B2.executedQty} quanti ${quantityS1}`, logFile);
@@ -168,21 +167,21 @@ async function BBS(apiKey, apiSecret, symbolB1, symbolPriceB1, symbolB2, symbolP
 
 async function BSS(apiKey, apiSecret, symbolB1, symbolPriceB1, symbolS1, symbolS2, invest, symbolsInfo) {
     const symbolPropsB1 = symbolsInfo.find(s => s.symbol === symbolB1);
-    const decimals = symbolPropsB1.decimals;
+    const symbolPropsS1 = symbolsInfo.find(s => s.symbol === symbolS1);
+    const symbolPropsS2 = symbolsInfo.find(s => s.symbol === symbolS2);
+    
     const calc = fx.calc3(invest, symbolPriceB1, symbolPropsS1.decimals);
     const quantityB1 = calc.quantidadeMoedas
     const B1 = await sendSpotBuyMarket(apiKey, apiSecret, symbolB1, quantityB1);
     fx.escreveLog(`${symbolB1} invest ${calc.valorFinalInvestido} preco ${symbolPriceB1} quanti ${quantityB1}`, logFile);
     fx.escreveLog(`order ${B1.orderId}: executedQty: ${B1.executedQty}`, logFile);
 
-    const symbolPropsS1 = symbolsInfo.find(s => s.symbol === symbolS1);
     const quantityS1 = fx.removeExcessDecimals(B1.executedQty, symbolPropsS1.decimals);
     const S1 = await sendSpotSellMarket(apiKey, apiSecret, symbolS1, quantityS1);
     fx.escreveLog(`${symbolS1} vende ${B1.executedQty} quanti ${quantityS1}`, logFile);
     fx.escreveLog(`order ${S1.orderId}: executedQty: ${S1.executedQty}`, logFile);
     fx.escreveLog(`order ${S1.orderId}: cummulativeQuoteQty: ${S1.cummulativeQuoteQty}`, logFile);
 
-    const symbolPropsS2 = symbolsInfo.find(s => s.symbol === symbolS2);
     const quantityS2 = fx.removeExcessDecimals(S1.cummulativeQuoteQty, symbolPropsS2.decimals);
     const S2 = await sendSpotSellMarket(apiKey, apiSecret, symbolS2, quantityS2);
     fx.escreveLog(`${symbolS2} vende ${S1.cummulativeQuoteQty} quanti ${quantityS2}`, logFile);
